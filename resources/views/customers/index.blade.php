@@ -1,4 +1,4 @@
-<img src="https://customer-manager-static-minh-2025.s3.ap-southeast-2.amazonaws.com/images/logo.jpg" alt="Logo" style="width: 150px; height: auto;">
+<img src="https://customer-manager-static-minh-2025.s3.ap-southeast-2.amazonaws.com/logo.jpg" alt="Logo" style="width: 150px; height: auto;">
 <!DOCTYPE html>
 <html>
 <head>
