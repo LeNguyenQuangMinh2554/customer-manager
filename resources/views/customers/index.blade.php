@@ -1,3 +1,4 @@
+<img src="https://customer-manager-static-minh-2025.s3.ap-southeast-2.amazonaws.com/images/logo.jpg" alt="Logo">
 <!DOCTYPE html>
 <html>
 <head>
