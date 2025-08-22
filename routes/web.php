@@ -8,3 +8,4 @@ Route::get('/', function () {
 });
 
 Route::resource('customers', CustomerController::class);
+Route::get('/customers/export', [CustomerController::class, 'export'])->name('customers.export');
