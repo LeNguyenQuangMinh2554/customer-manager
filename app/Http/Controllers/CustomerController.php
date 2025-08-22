@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -9,10 +10,15 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+    $customers = $search ? Customer::where('name', 'like', "%{$search}%")
+        ->orWhere('email', 'like', "%{$search}%")->paginate(5) : Customer::paginate(5);
+    return view('customers.index', compact('customers'));
+}
+
+    
 
     /**
      * Show the form for creating a new resource.
@@ -61,4 +67,8 @@ class CustomerController extends Controller
     {
         //
     }
+
+    
 }
+
+
