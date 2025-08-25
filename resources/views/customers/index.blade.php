@@ -127,7 +127,8 @@
 
         {{-- Pagination --}}
         <div class="mt-3 d-flex justify-content-center">
-            {{ $customers->links() }}
+            {{ $customers->onEachSide(1)->links('pagination::bootstrap-5') }}
+
         </div>
     </div>
 
