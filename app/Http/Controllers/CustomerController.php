@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CustomersExport;
+use Illuminate\Support\Facades\Response;
 
 class CustomerController extends Controller
 {
@@ -17,8 +15,8 @@ class CustomerController extends Controller
         // Tìm kiếm
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('name', 'like', "%$search%")
-                  ->orWhere('email', 'like', "%$search%");
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
         }
 
         // Sắp xếp
@@ -49,7 +47,7 @@ class CustomerController extends Controller
 
         Customer::create($request->all());
 
-        return Redirect::route('customers.index')->with('success', 'Customer created successfully.');
+        return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
     }
 
     public function show(Customer $customer)
@@ -73,18 +71,41 @@ class CustomerController extends Controller
 
         $customer->update($request->all());
 
-        return Redirect::route('customers.index')->with('success', 'Customer updated successfully.');
+        return redirect()->route('customers.index')->with('success', 'Customer updated successfully.');
     }
 
     public function destroy(Customer $customer)
     {
         $customer->delete();
 
-        return Redirect::route('customers.index')->with('success', 'Customer deleted successfully.');
+        return redirect()->route('customers.index')->with('success', 'Customer deleted successfully.');
     }
 
     public function export()
     {
-        return Excel::download(new CustomersExport, 'customers.csv');
+        $customers = Customer::all();
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=customers.csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $columns = array('ID', 'Name', 'Email', 'Phone', 'Address', 'Created At', 'Updated At');
+
+        $callback = function() use ($customers, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($customers as $customer) {
+                fputcsv($file, array($customer->id, $customer->name, $customer->email, $customer->phone, $customer->address, $customer->created_at, $customer->updated_at));
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
     }
 }
