@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -82,30 +83,31 @@ class CustomerController extends Controller
     }
 
     public function export()
-    {
-        $customers = Customer::all();
+{
+    Log::info('Export function called');
+    $customers = Customer::all();
 
-        $headers = array(
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=customers.csv",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        );
+    $headers = array(
+        "Content-type"        => "text/csv",
+        "Content-Disposition" => "attachment; filename=customers.csv",
+        "Pragma"              => "no-cache",
+        "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+        "Expires"             => "0"
+    );
 
-        $columns = array('ID', 'Name', 'Email', 'Phone', 'Address', 'Created At', 'Updated At');
+    $columns = array('ID', 'Name', 'Email', 'Phone', 'Address', 'Created At', 'Updated At');
 
-        $callback = function() use ($customers, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
+    $callback = function() use ($customers, $columns) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, $columns);
 
-            foreach ($customers as $customer) {
-                fputcsv($file, array($customer->id, $customer->name, $customer->email, $customer->phone, $customer->address, $customer->created_at, $customer->updated_at));
-            }
+        foreach ($customers as $customer) {
+            fputcsv($file, array($customer->id, $customer->name, $customer->email, $customer->phone, $customer->address, $customer->created_at, $customer->updated_at));
+        }
 
-            fclose($file);
-        };
+        fclose($file);
+    };
 
-        return Response::stream($callback, 200, $headers);
-    }
+    return Response::stream($callback, 200, $headers);
+}
 }
