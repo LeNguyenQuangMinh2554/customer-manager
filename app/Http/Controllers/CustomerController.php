@@ -26,7 +26,7 @@ class CustomerController extends Controller
             $query->orderBy($sort, $direction);
         }
 
-        $customers = $query->paginate(5); // Phân trang, 5 item/trang
+        $customers = $query->paginate(10); // Phân trang, 5 item/trang
 
         return view('customers.index', compact('customers'));
     }
